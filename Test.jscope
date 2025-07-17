@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<JScopeProject>
+    <FileVersion major="1" minor="1" />
+    <Project>
+        <Configuration>
+            <JLink>
+                <Options Connection="1" IsRTTSession="0" IsRTTWithTimeStamp="0" SamplingPeriod="10" SerialNo="0" JTAG_IRPre="0" JTAG_DRPre="0" IP="" TargetDevice="STM32F405RG" TargetInterface="SWD" InterfaceSpeed="3000" />
+            </JLink>
+            <ElfFile Name="D:\Desktop\Myself\Generate_20250715\Generate\Debug\Hex_File\Temperature_Project.axf" />
+            <Scope>
+                <Options TimeResolutionUs="1000000" />
+            </Scope>
+            <Trigger>
+                <Options Level="0" Symbol="valDatavaild" On="0" Auto="0" Rise="0" Fall="0" />
+            </Trigger>
+        </Configuration>
+        <Windows>
+            <Graph Show="1" />
+            <Watch Show="1" />
+        </Windows>
+        <SelectedSymbols>
+            <Symbol>
+                <Options Name="valDatavaild" Address="0x20000048" Type="unsigned char" TypeID="6" Size="1" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="4" ShowInGraph="1" YOffset="-2" IsAutoConfig="0" YResolution="1" MaxValue="255" File="D:\Desktop\Myself\Generate_20250715\Generate\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[0].valDatavaild" />
+            </Symbol>
+            <Symbol>
+                <Options Name="valVoltage" Address="0x20000050" Type="int" TypeID="12" Size="4" GraphColorRed="0" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="5" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="500" MaxValue="2147483647" File="D:\Desktop\Myself\Generate_20250715\Generate\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[0].valVoltage" />
+            </Symbol>
+            <Symbol>
+                <Options Name="numErrorCnt" Address="0x2000001F" Type="unsigned char" TypeID="6" Size="1" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="0" YMaxSampled="255" YAvgSampled="127.486" Offset="9" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="30" MaxValue="255" File="D:\Desktop\Myself\Generate_20250715\Generate\Debug/..\Source_Files\Src\ads1263.c" DrawStyle="0" NameWithParents=".numErrorCnt" />
+            </Symbol>
+        </SelectedSymbols>
+    </Project>
+</JScopeProject>

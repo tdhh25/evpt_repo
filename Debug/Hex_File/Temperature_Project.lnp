@@ -1,0 +1,28 @@
+--cpu=Cortex-M4.fp.sp
+".\hex_file\ads1263.o"
+".\hex_file\main.o"
+".\hex_file\stm32f4xx_hal_msp.o"
+".\hex_file\stm32f4xx_it.o"
+".\hex_file\system_stm32f4xx.o"
+".\hex_file\sp3485en.o"
+".\hex_file\startup_stm32f405xx.o"
+".\hex_file\stm32f4xx_hal.o"
+".\hex_file\stm32f4xx_hal_i2c.o"
+".\hex_file\stm32f4xx_hal_i2c_ex.o"
+".\hex_file\stm32f4xx_hal_rcc.o"
+".\hex_file\stm32f4xx_hal_flash_ex.o"
+".\hex_file\stm32f4xx_hal_flash.o"
+".\hex_file\stm32f4xx_hal_flash_ramfunc.o"
+".\hex_file\stm32f4xx_hal_gpio.o"
+".\hex_file\stm32f4xx_hal_dma.o"
+".\hex_file\stm32f4xx_hal_dma_ex.o"
+".\hex_file\stm32f4xx_hal_pwr.o"
+".\hex_file\stm32f4xx_hal_pwr_ex.o"
+".\hex_file\stm32f4xx_hal_cortex.o"
+".\hex_file\stm32f4xx_hal_exti.o"
+".\hex_file\stm32f4xx_hal_spi.o"
+".\hex_file\stm32f4xx_hal_uart.o"
+--strict --scatter ".\Hex_File\Temperature_Project.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Temperature_Project.map" -o .\Hex_File\Temperature_Project.axf
