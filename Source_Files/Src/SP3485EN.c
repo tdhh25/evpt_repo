@@ -24,7 +24,7 @@ HAL_StatusTypeDef RS485_SendData_DMA(uint8_t* data, uint16_t size)
 {
     HAL_StatusTypeDef status;
     
-    Usart_RS485_TransmitModeConfig(UsartTransmitMode);
+    //Usart_RS485_TransmitModeConfig(UsartTransmitMode);
 
     status = HAL_UART_Transmit_DMA(&huart2, data, size);
     
@@ -34,7 +34,7 @@ HAL_StatusTypeDef RS485_SendData_DMA(uint8_t* data, uint16_t size)
 
 HAL_StatusTypeDef RS485_ReceiveData_DMA(uint8_t* buffer, uint16_t size)
 {
-		Usart_RS485_TransmitModeConfig(UsartReceiveMode);
+	//Usart_RS485_TransmitModeConfig(UsartReceiveMode);
 
     return HAL_UART_Receive_DMA(&huart2, buffer, size);
 }

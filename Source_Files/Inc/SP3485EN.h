@@ -26,3 +26,4 @@ extern HAL_StatusTypeDef RS485_ReceiveData_DMA(uint8_t* buffer, uint16_t size);
 
 
 #endif
+

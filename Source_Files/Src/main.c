@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dwin_driver.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -61,8 +62,7 @@ uint8_t TxData_Lo[8] = {0,1,2,3,4,5,6,7};
 uint8_t RxData_Lo[8] = {0};
 void Task_1ms_Function(void)
 {
-	RS485_SendData_DMA(TxData_Lo,8);
-	RS485_ReceiveData_DMA(RxData_Lo,8);
+	Dwin_MainFunction();
 	Ads_1msMain_Function();
 
 }

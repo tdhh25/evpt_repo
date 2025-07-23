@@ -10,13 +10,14 @@
       <TargetName>project</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pArmCC>5060960::V5.06 update 7 (build 960)::.\ARM_Compiler_v506</pArmCC>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARM_Compiler_v506</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F405RGTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.3.0.0</PackID>
+          <PackID>Keil.STM32F4xx_DFP.3.1.0</PackID>
           <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x2001BFFF) IRAM2(0x2001C000-0x2001FFFF) IROM(0x8000000-0x80FFFFF)  CLOCK(25000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -186,6 +187,7 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -413,6 +415,21 @@
               <FileType>1</FileType>
               <FilePath>..\Source_Files\Src\SP3485EN.c</FilePath>
             </File>
+            <File>
+              <FileName>dwin_com.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source_Files\Src\dwin_com.c</FilePath>
+            </File>
+            <File>
+              <FileName>dwin_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source_Files\Src\dwin_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>dwin_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source_Files\Src\dwin_config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -447,6 +464,26 @@
               <FileName>SP3485EN.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Source_Files\Inc\SP3485EN.h</FilePath>
+            </File>
+            <File>
+              <FileName>dwin_com.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Source_Files\Inc\dwin_com.h</FilePath>
+            </File>
+            <File>
+              <FileName>dwin_driver.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Source_Files\Inc\dwin_driver.h</FilePath>
+            </File>
+            <File>
+              <FileName>dwin_config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Source_Files\Inc\dwin_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>dwin_types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Source_Files\Inc\dwin_types.h</FilePath>
             </File>
           </Files>
         </Group>

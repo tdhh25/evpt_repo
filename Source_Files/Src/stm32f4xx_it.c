@@ -196,7 +196,7 @@ void SysTick_Handler(void)
 	else
 	{
 		Tsk_RunFlag = 1;
-	numTskCnt = 0;
+		numTskCnt = 0;
 	}
 		
 		HAL_IncTick();
