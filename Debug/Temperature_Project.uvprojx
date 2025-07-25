@@ -430,6 +430,11 @@
               <FileType>1</FileType>
               <FilePath>..\Source_Files\Src\dwin_config.c</FilePath>
             </File>
+            <File>
+              <FileName>ring_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source_Files\Src\ring_buffer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -484,6 +489,11 @@
               <FileName>dwin_types.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Source_Files\Inc\dwin_types.h</FilePath>
+            </File>
+            <File>
+              <FileName>ring_buffer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Source_Files\Inc\ring_buffer.h</FilePath>
             </File>
           </Files>
         </Group>

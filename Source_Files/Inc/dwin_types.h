@@ -12,15 +12,9 @@ struct dwin_value {
 	const uint16_t 	base_addr;
 };
 
-struct dwin_scheduler{
-    uint8_t channel;
-    uint8_t index;
-};
-
 struct dwin_device {
 	uint8_t 				step;
 	struct dwin_value*		value;
-	struct dwin_scheduler	scheduler;
 };
 
 #endif /* __DWIN_TYPES_H_ */

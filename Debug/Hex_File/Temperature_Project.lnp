@@ -8,6 +8,7 @@
 ".\hex_file\dwin_com.o"
 ".\hex_file\dwin_driver.o"
 ".\hex_file\dwin_config.o"
+".\hex_file\ring_buffer.o"
 ".\hex_file\startup_stm32f405xx.o"
 ".\hex_file\stm32f4xx_hal.o"
 ".\hex_file\stm32f4xx_hal_i2c.o"

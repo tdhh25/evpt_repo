@@ -32,8 +32,7 @@ extern "C" {
 #include "SP3485EN.h"
 #include "ads1263.h"
 /* Private includes ----------------------------------------------------------*/
-#define true    1U
-#define false   0U
+
 void Error_Handler(void);
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
