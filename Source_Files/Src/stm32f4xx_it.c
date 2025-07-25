@@ -188,7 +188,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-	if(numTskCnt < 10)
+	if(numTskCnt < 1)
 	{
 		numTskCnt++;
 	

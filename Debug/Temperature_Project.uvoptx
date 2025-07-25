@@ -153,7 +153,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Dc_valSendData_Mp</ItemText>
+          <ItemText>Dc_valChannelData_Mp</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
