@@ -1,19 +1,20 @@
 #include "AT24C256.h"
 
-AT24C_Async_t at24c_async =
+static AT24C_Async_t at24c_async =
 {
     .state = AT24C_STATE_WRITE_SEND,
     .is_busy = 0,
     .result = 0
 };
-#define  NULL_PTR  ((void *)0)
-uint8_t *Wr_DataLastPtr = NULL_PTR;
-uint16_t Wr_AddrLast = 0xFFFF;
-uint16_t Wr_LenLast = 0;
-#define SET_SUCCESSFUL           0
-#define STATUS_BUSY              1
-#define INVALID_PARAMETER        2
-#define STATUS_IDEL              0
+
+static uint16_t Wr_AddrLast = 0xFFFF;
+static uint16_t Wr_LenLast = 0;
+
+static uint16_t Rd_AddrLast = 0xFFFF;
+static uint16_t Rd_LenLast = 0;
+
+
+
 /**
  * @brief  启动异步写操作（非阻塞）
  * @param  addr：起始地址（0x0000~0x3FFF）
@@ -22,19 +23,14 @@ uint16_t Wr_LenLast = 0;
  * @retval 0=成功启动；1=忙；2=参数错误（地址越界/数据为空）
  * @依据：页写操作流程（）
  */
-uint8_t AT24C_AsyncWriteStart(uint16_t addr, uint8_t *data, uint16_t len)
+AT24C_RetType_TDEM AT24C_AsyncWriteStart(uint16_t addr, uint8_t *data, uint16_t len)
 {
-	if((Wr_AddrLast == addr) && (Wr_DataLastPtr == data) && (Wr_LenLast == len))
+	AT24C_RetType_TDEM valRet = AT24C_TransmitIdel;
+	if((Wr_AddrLast != addr) && (Wr_LenLast != len))
 	{
-		// 检查忙状态和参数合法性
-    if (at24c_async.is_busy)
-    {
-        return STATUS_BUSY;
-    }
-
     if (addr + len > AT24C_TOTAL_SIZE || data == NULL || len == 0)
     {
-        return INVALID_PARAMETER;
+        valRet = AT24C_InvaildParameter;
     }
 
     // 初始化异步参数
@@ -42,10 +38,9 @@ uint8_t AT24C_AsyncWriteStart(uint16_t addr, uint8_t *data, uint16_t len)
     at24c_async.curr_addr = addr;
     at24c_async.remain_len = len;
     at24c_async.data_buf = data;
-    at24c_async.is_busy = STATUS_BUSY;
-    at24c_async.result = SET_SUCCESSFUL;
-    return SET_SUCCESSFUL;
-	
+    at24c_async.is_busy = AT24C_TransmitBusy;
+    at24c_async.result = 0;
+	  
 	}
 	else
 	{
@@ -53,9 +48,9 @@ uint8_t AT24C_AsyncWriteStart(uint16_t addr, uint8_t *data, uint16_t len)
 	
 	}
 	Wr_AddrLast = addr;
-	Wr_DataLastPtr = data;
 	Wr_LenLast = len;
-	return at24c_async.is_busy;
+	valRet = at24c_async.is_busy;
+	return valRet;
 
 }
 
@@ -69,15 +64,14 @@ uint8_t AT24C_AsyncWriteStart(uint16_t addr, uint8_t *data, uint16_t len)
  */
 uint8_t AT24C_AsyncReadStart(uint16_t addr, uint8_t *data, uint16_t len)
 {
-    // 检查忙状态和参数合法性
-    if (at24c_async.is_busy)
-    {
-        return STATUS_BUSY;
-    }
+	
+		AT24C_RetType_TDEM valRet = AT24C_TransmitIdel;
 
-    if (addr + len > AT24C_TOTAL_SIZE || data == NULL || len == 0)
+	if((Rd_AddrLast != addr) && (Rd_LenLast != len))
+	{
+		if (addr + len > AT24C_TOTAL_SIZE || data == NULL || len == 0)
     {
-        return INVALID_PARAMETER;
+        valRet =  AT24C_InvaildParameter;
     }
 
     // 初始化异步参数
@@ -86,8 +80,17 @@ uint8_t AT24C_AsyncReadStart(uint16_t addr, uint8_t *data, uint16_t len)
     at24c_async.remain_len = len;
     at24c_async.data_buf = data;
     at24c_async.is_busy = STATUS_BUSY;
-    at24c_async.result = SET_SUCCESSFUL;
-    return SET_SUCCESSFUL;
+    at24c_async.result = 0;
+	
+	}
+	else
+	{
+	
+	}
+	Rd_AddrLast = addr;
+	Rd_LenLast = len;
+	valRet = at24c_async.is_busy;
+	return valRet;
 }
 
 
@@ -95,7 +98,7 @@ uint8_t AT24C_AsyncReadStart(uint16_t addr, uint8_t *data, uint16_t len)
  * @brief  合并读写的Polling函数（需在主循环定期调用）
  * @依据：写操作时序（）、读操作时序（）、ACK Polling机制（）
  */
-void AT24C_AsyncPoll(void)
+void AT24C_AsyncPolling_Function(void)
 {
 
     // 非忙状态直接返回
@@ -124,7 +127,7 @@ void AT24C_AsyncPoll(void)
             if (HAL_I2C_Master_Transmit(&hi2c1, AT24C_ADDR_WRITE, tx_buf, 2 + write_len, 100) != HAL_OK)
             {
                 at24c_async.result = 0x02; // 发送失败
-                at24c_async.is_busy = SET_SUCCESSFUL;
+                at24c_async.is_busy = AT24C_TransmitIdel;
                 return;
             }
             break;
@@ -149,7 +152,7 @@ void AT24C_AsyncPoll(void)
                 if (at24c_async.remain_len == 0)
                 {
                     at24c_async.result = 0x00; // 全部完成
-                    at24c_async.is_busy = SET_SUCCESSFUL;
+                    at24c_async.is_busy = AT24C_TransmitIdel;
                 }
                 else
                 {
@@ -185,8 +188,7 @@ void AT24C_AsyncPoll(void)
         case AT24C_STATE_READ_RECV:
         {
             // 1. 接收数据（无内部等待周期，）
-            if (HAL_I2C_Master_Receive(&hi2c1, AT24C_ADDR_READ, at24c_async.data_buf,
-                                       at24c_async.remain_len, 100) == HAL_OK)
+            if (HAL_I2C_Master_Receive(&hi2c1, AT24C_ADDR_READ, at24c_async.data_buf,at24c_async.remain_len, 100) == HAL_OK)
             {
                 at24c_async.result = 0x00; // 接收成功
             }
@@ -195,7 +197,7 @@ void AT24C_AsyncPoll(void)
                 at24c_async.result = 0x05; // 接收失败
             }
 
-            at24c_async.is_busy = SET_SUCCESSFUL; // 读操作完成
+            at24c_async.is_busy = AT24C_TransmitIdel; // 读操作完成
             break;
         }
 				default:

@@ -39,24 +39,8 @@ void Uart_485_Init(void)
 	RS485_ReceiveData_DMA(&Rb_valRxBuffer_Mp[0], UART_RECEIVE_LEN);
 }
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart)
-{
-	if (huart == &huart2)
-	{
-		huart->gState = HAL_UART_STATE_READY;
-	}
-}
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
-{
-	if (huart == &huart2)
-	{
-		if(0x83 == Rb_valRxBuffer_Mp[3])
-			RingBuffer_Put(&Rb_valBuffer_Mp, Rb_valRxBuffer_Mp, UART_RECEIVE_LEN);
-		RS485_ReceiveData_DMA(&Rb_valRxBuffer_Mp[0], UART_RECEIVE_LEN);
-	}
-}
-void USART1_IRQHandler(void)
+void USART2_IRQHandler(void)
 {
     if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE) != RESET)
     {

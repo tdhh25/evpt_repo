@@ -4,6 +4,8 @@
 
 #include "stm32f4xx_hal.h"
 
+#define  NULL_PTR  ((void *)0)
+
 #define AT24C_ADDR_WRITE 0xA0       // 写地址（A0/A1/A2接地时）
 #define AT24C_ADDR_READ  0xA1       // 读地址
 #define AT24C_PAGE_SIZE  64         // 页大小64字节（）
@@ -32,6 +34,14 @@ typedef struct
 } AT24C_Async_t;
 
 
+typedef enum
+{
+	
+	AT24C_TransmitIdel = 0U,
+	AT24C_TransmitBusy,
+	AT24C_InvaildParameter,
+	
+}AT24C_RetType_TDEM;
 
 extern I2C_HandleTypeDef hi2c1;
 
