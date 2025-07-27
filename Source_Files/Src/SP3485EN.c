@@ -35,6 +35,7 @@ void Uart_485_Init(void)
 {
     MX_USART2_UART_Init();
 	RingBuffer_Init(&Rb_valBuffer_Mp);
+	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 	RS485_ReceiveData_DMA(&Rb_valRxBuffer_Mp[0], UART_RECEIVE_LEN);
 }
 
@@ -55,4 +56,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 		RS485_ReceiveData_DMA(&Rb_valRxBuffer_Mp[0], UART_RECEIVE_LEN);
 	}
 }
+void USART1_IRQHandler(void)
+{
+    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE) != RESET)
+    {
+        __HAL_UART_CLEAR_IDLEFLAG(&huart2);
 
+    }
+
+    HAL_UART_IRQHandler(&huart2);
+}
