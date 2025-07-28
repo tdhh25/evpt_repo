@@ -7,7 +7,7 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_uart.h"
-#include "ring_buffer.h"
+#include "dwin_driver.h"
 
 typedef enum
 {

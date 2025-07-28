@@ -100,7 +100,7 @@ int main(void)
   Uart_485_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+	Dwin_InitFunction();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -244,7 +244,8 @@ void MX_USART2_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART2_Init 0 */
-
+  HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(USART2_IRQn);
   /* USER CODE END USART2_Init 0 */
 
   /* USER CODE BEGIN USART2_Init 1 */

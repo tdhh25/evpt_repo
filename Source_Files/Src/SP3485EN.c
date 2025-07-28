@@ -1,7 +1,7 @@
 #include "SP3485EN.h"
 
+static uint8_t Rb_valRxLength = 0;
 static uint8_t Rb_valRxBuffer_Mp[UART_RECEIVE_LEN] = {0};
-static struct ring_buffer Rb_valBuffer_Mp;
 
 void Usart_RS485_TransmitModeConfig(USART_ModeSet Mode)
 {

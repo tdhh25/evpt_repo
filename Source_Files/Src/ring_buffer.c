@@ -28,7 +28,9 @@ bool RingBuffer_Put(struct ring_buffer* Rb_valRingBuffer, uint8_t* Rb_valData, u
 {
 	bool Rb_valRet_Lo = false;
 	
-	if(RingBuffer_IsFull(Rb_valRingBuffer) || (Rb_valLength > UART_RECEIVE_LEN))
+	if(RingBuffer_IsFull(Rb_valRingBuffer) ||\
+	  (Rb_valLength > UART_RECEIVE_LEN) ||\
+	  (0 == Rb_valLength))
 		return true;
 	
 	Rb_valRingBuffer->uart_slots[Rb_valRingBuffer->write].rx_lenth = Rb_valLength;
@@ -40,16 +42,23 @@ bool RingBuffer_Put(struct ring_buffer* Rb_valRingBuffer, uint8_t* Rb_valData, u
 	return Rb_valRet_Lo;
 }
 
-bool RingBuffer_Get(struct ring_buffer* Rb_valRingBuffer, uint8_t* Rb_valData, uint8_t Rb_valLength)
+bool RingBuffer_Get(struct ring_buffer* Rb_valRingBuffer, uint8_t* Rb_valData, uint8_t* Rb_valLength)
 {
-	bool Rb_valRet_Lo = false;
+	bool 	Rb_valRet_Lo = false;
+	uint8_t Rb_valLength_Lo = 0;
 	
-	if(RingBuffer_IsEmpty(Rb_valRingBuffer) || (Rb_valLength > UART_RECEIVE_LEN))
+	if(RingBuffer_IsEmpty(Rb_valRingBuffer))
 		return true;
 	
-	memcpy(Rb_valData, &Rb_valRingBuffer->uart_slots[Rb_valRingBuffer->read].rx_data[0], Rb_valLength);	
+	Rb_valLength_Lo = Rb_valRingBuffer->uart_slots[Rb_valRingBuffer->read].rx_lenth;
+	if((Rb_valLength_Lo > UART_RECEIVE_LEN) || (0 == Rb_valLength_Lo))
+		return true;
 	
-	memset(&Rb_valRingBuffer->uart_slots[Rb_valRingBuffer->read].rx_data[0], 0, Rb_valLength);
+	*Rb_valLength = Rb_valLength_Lo;
+	
+	memcpy(Rb_valData, &Rb_valRingBuffer->uart_slots[Rb_valRingBuffer->read].rx_data[0], Rb_valLength_Lo);	
+	
+	memset(&Rb_valRingBuffer->uart_slots[Rb_valRingBuffer->read].rx_data[0], 0, Rb_valLength_Lo);
 	Rb_valRingBuffer->uart_slots[Rb_valRingBuffer->read].rx_lenth = 0;
 	Rb_valRingBuffer->read = ((Rb_valRingBuffer->read + 1) % RING_BUFFER_SIZE);
 	

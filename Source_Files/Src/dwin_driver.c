@@ -1,10 +1,33 @@
 #include "dwin_driver.h"
 
 static struct dwin_device Dd_valDevice_Mp;
+static struct ring_buffer Dd_valRingBuffer_Mp;
 
-void Dwin_ProcessTouchData()
+struct ring_buffer* Dwin_GetRingBuffer(void)
 {
+	return &Dd_valRingBuffer_Mp;
+}
 
+void Dwin_ProcessTouchData(void)
+{
+	uint8_t		Dd_valRxLength_Lo = 0;
+	uint8_t		Dd_valRxData_Lo[16] = {0};
+	uint16_t	Dd_valAddr_Lo = 0, Dd_valData_Lo = 0;
+	
+	RingBuffer_Get(&Dd_valRingBuffer_Mp, &Dd_valRxData_Lo[0], &Dd_valRxLength_Lo);
+	Dd_valAddr_Lo = ((Dd_valRxData_Lo[4] << 8) | Dd_valRxData_Lo[5]);
+	Dd_valData_Lo = ((Dd_valRxData_Lo[7] << 8) | Dd_valRxData_Lo[8]);
+	switch(Dd_valAddr_Lo)
+	{
+		case dwin_addr_average:
+			if(DWIN_TOUCH_KEY_VALUE == Dd_valData_Lo)
+			{
+				Dd_valDevice_Mp.ctrl.average = 1 - Dd_valDevice_Mp.ctrl.average;
+			}
+			break;
+		default:
+			break;
+	}
 }
 
 void Dwin_ProcessChannelData(uint8_t Dd_valChannel)
@@ -42,11 +65,23 @@ void Dwin_ProcessChannelData(uint8_t Dd_valChannel)
 	Dwin_SendData(Dd_valSendData_Lo, 12);
 }
 
+void Dwin_InitFunction(void)
+{
+	RingBuffer_Init(&Dd_valRingBuffer_Mp);
+}
+
 void Dwin_MainFunction(void)
 {
+	/* 处理触控数据 */
+	Dwin_ProcessTouchData();
+
 	Dd_valDevice_Mp.step = Dd_valDevice_Mp.step % 10;
+
+	/* 发送采集值 */
+	if(Dd_valDevice_Mp.ctrl.average)
+	{
+		//Dwin_ProcessChannelData(0);
+		Dwin_ProcessChannelData(Dd_valDevice_Mp.step);
+	}
 	Dd_valDevice_Mp.step++;
-	
-    //Dwin_ProcessChannelData(Dd_valDevice_Mp.step);
-	Dwin_ProcessChannelData(Dd_valDevice_Mp.step);
 }
