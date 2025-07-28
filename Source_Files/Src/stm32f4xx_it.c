@@ -182,13 +182,14 @@ void PendSV_Handler(void)
   * @brief This function handles System tick timer.
   */
 extern uint8_t Tsk_RunFlag;
+extern void Task_1ms_Function(void);
 void SysTick_Handler(void)
 {
 	static uint8_t numTskCnt = 0;
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+	Task_1ms_Function();
   /* USER CODE END SysTick_IRQn 0 */
-	if(numTskCnt < 1)
+	if(numTskCnt < 10)
 	{
 		numTskCnt++;
 	
