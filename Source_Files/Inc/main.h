@@ -31,7 +31,10 @@ extern "C" {
 #include "RTE_Components.h"             // Component selection
 #include "SP3485EN.h"
 #include "ads1263.h"
+#include "AT24C256.h"
 /* Private includes ----------------------------------------------------------*/
+#define  NULL_PTR  ((void *)0)
+
 
 void Error_Handler(void);
 void SystemClock_Config(void);

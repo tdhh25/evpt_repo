@@ -63,6 +63,28 @@ uint8_t RxData_Lo[8] = {0};
 void Task_1ms_Function(void)
 {
 	Dwin_MainFunction();
+}
+uint8_t Rd_Buf_Mp[100] = {0};
+uint8_t fgReadOver = 0;
+void Task_10ms_Function(void)
+{
+	uint8_t valWrBuf[100] = {0};
+	uint8_t WrCnt = 0;
+	for(WrCnt = 5;WrCnt < 100;WrCnt++)
+	{
+		valWrBuf[WrCnt-5] = WrCnt;
+	
+	}
+	if(AT24C_TransmitIdel == AT24C_EEpromWrite_Function(0x100,valWrBuf,100))
+	{
+		if(AT24C_TransmitIdel == AT24C_EEpromRead_Function(0x100,Rd_Buf_Mp,100))
+		{
+			fgReadOver = 1;
+		
+		}
+	
+	}
+	AT24C_AsyncPolling_Function();
 	Ads_1msMain_Function();
 
 }
@@ -111,7 +133,7 @@ int main(void)
 
 		if(Tsk_RunFlag == true)
 		{
-			Task_1ms_Function();
+			Task_10ms_Function();
 			Tsk_RunFlag = 0;
 		
 		}

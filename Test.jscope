@@ -4,14 +4,14 @@
     <Project>
         <Configuration>
             <JLink>
-                <Options Connection="1" IsRTTSession="0" IsRTTWithTimeStamp="0" SamplingPeriod="10" SerialNo="0" JTAG_IRPre="0" JTAG_DRPre="0" IP="" TargetDevice="STM32F405RG" TargetInterface="SWD" InterfaceSpeed="3000" />
+                <Options Connection="1" IsRTTSession="0" IsRTTWithTimeStamp="0" IsRTTPlus="0" SamplingPeriod="10" SerialNo="0" JTAG_IRPre="0" JTAG_DRPre="0" IP="" TargetDevice="STM32F405RG" TargetInterface="SWD" InterfaceSpeed="3200" />
             </JLink>
-            <ElfFile Name="D:\Desktop\Myself\Generate_20250715\Generate\Debug\Hex_File\Temperature_Project.axf" />
+            <ElfFile Name="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug\Hex_File\Temperature_Project.axf" />
             <Scope>
                 <Options TimeResolutionUs="1000000" />
             </Scope>
             <Trigger>
-                <Options Level="0" Symbol="valDatavaild" On="0" Auto="0" Rise="0" Fall="0" />
+                <Options Level="0" Symbol="valVoltage" On="0" Auto="0" Rise="0" Fall="0" />
             </Trigger>
         </Configuration>
         <Windows>
@@ -20,13 +20,25 @@
         </Windows>
         <SelectedSymbols>
             <Symbol>
-                <Options Name="valDatavaild" Address="0x20000048" Type="unsigned char" TypeID="6" Size="1" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="4" ShowInGraph="1" YOffset="-2" IsAutoConfig="0" YResolution="1" MaxValue="255" File="D:\Desktop\Myself\Generate_20250715\Generate\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[0].valDatavaild" />
+                <Options Name="valVoltage" Address="0x200000D8" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="-1.16415e-06" YMaxSampled="2500" YAvgSampled="534.026" Offset="4" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="500" MaxValue="-2147483648" File="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[0].valVoltage" />
             </Symbol>
             <Symbol>
-                <Options Name="valVoltage" Address="0x20000050" Type="int" TypeID="12" Size="4" GraphColorRed="0" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="0" YMaxSampled="0" YAvgSampled="0" Offset="5" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="500" MaxValue="2147483647" File="D:\Desktop\Myself\Generate_20250715\Generate\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[0].valVoltage" />
+                <Options Name="valVoltage" Address="0x200000E4" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="-1.16415e-06" YMaxSampled="2500" YAvgSampled="556.049" Offset="8" ShowInGraph="0" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[1].valVoltage" />
             </Symbol>
             <Symbol>
-                <Options Name="numErrorCnt" Address="0x2000001F" Type="unsigned char" TypeID="6" Size="1" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="0" YMaxSampled="255" YAvgSampled="127.486" Offset="9" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="30" MaxValue="255" File="D:\Desktop\Myself\Generate_20250715\Generate\Debug/..\Source_Files\Src\ads1263.c" DrawStyle="0" NameWithParents=".numErrorCnt" />
+                <Options Name="valVoltage" Address="0x200000F0" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-1.16415e-06" YMaxSampled="2500" YAvgSampled="533.824" Offset="12" ShowInGraph="0" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[2].valVoltage" />
+            </Symbol>
+            <Symbol>
+                <Options Name="valVoltage" Address="0x200000FC" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="-1.16415e-06" YMaxSampled="2500" YAvgSampled="582.922" Offset="16" ShowInGraph="0" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[3].valVoltage" />
+            </Symbol>
+            <Symbol>
+                <Options Name="valVoltage" Address="0x20000108" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="255" YMinSampled="-1.16415e-06" YMaxSampled="2500" YAvgSampled="557.464" Offset="20" ShowInGraph="0" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[4].valVoltage" />
+            </Symbol>
+            <Symbol>
+                <Options Name="valVoltage" Address="0x20000114" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="-1.16415e-06" YMaxSampled="-1.16415e-06" YAvgSampled="-1.16415e-06" Offset="24" ShowInGraph="0" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug/..\Source_Files\Inc\ads1263.h" DrawStyle="0" NameWithParents=".Ads_valResults_Mp[5].valVoltage" />
+            </Symbol>
+            <Symbol>
+                <Options Name="numErrorCnt" Address="0x20000002" Type="unsigned char" TypeID="6" Size="1" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="0" YMaxSampled="255" YAvgSampled="136.256" Offset="28" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="50" MaxValue="255" File="D:\00_YXL_Desktop\Git_Project\evpt_repo\Debug/..\Source_Files\Src\ads1263.c" DrawStyle="0" NameWithParents=".numErrorCnt" />
             </Symbol>
         </SelectedSymbols>
     </Project>
