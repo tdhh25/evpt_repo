@@ -34,19 +34,33 @@ HAL_StatusTypeDef RS485_ReceiveData_DMA(uint8_t* buffer, uint16_t size)
 void Uart_485_Init(void)
 {
     MX_USART2_UART_Init();
-	RingBuffer_Init(&Rb_valBuffer_Mp);
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 	RS485_ReceiveData_DMA(&Rb_valRxBuffer_Mp[0], UART_RECEIVE_LEN);
 }
 
+void HAL_UART_IdleCallback(UART_HandleTypeDef *huart)
+{
+	struct ring_buffer* Rb_valRingBuffer_Lo = NULL;
+	
+	if (huart == &huart2)
+	{
+		HAL_UART_DMAStop(&huart2);
+		Rb_valRxLength = UART_RECEIVE_LEN - __HAL_DMA_GET_COUNTER(huart->hdmarx);
+		if(Rb_valRxLength > 6)
+		{
+			Rb_valRingBuffer_Lo = Dwin_GetRingBuffer();
+			if((Rb_valRingBuffer_Lo) && (0x83 == Rb_valRxBuffer_Mp[3]))
+				RingBuffer_Put(Rb_valRingBuffer_Lo, Rb_valRxBuffer_Mp, Rb_valRxLength);
+		}
+		RS485_ReceiveData_DMA(&Rb_valRxBuffer_Mp[0], UART_RECEIVE_LEN);
+	}
+}
 
 void USART2_IRQHandler(void)
 {
     if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE) != RESET)
     {
         __HAL_UART_CLEAR_IDLEFLAG(&huart2);
-
+		HAL_UART_IdleCallback(&huart2);
     }
-
-    HAL_UART_IRQHandler(&huart2);
 }
