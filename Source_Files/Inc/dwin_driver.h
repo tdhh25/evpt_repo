@@ -8,11 +8,18 @@
 #include "dwin_config.h"
 #include "dwin_types.h"
 
+extern const uint16_t  Dc_valChannelDataAddr_Mp[DWIN_CHANNEL_MAX];
 extern struct dwin_value Dc_valChannelData_Mp[DWIN_CHANNEL_MAX];
+extern struct dwin_value Dc_valLastChannelData_Mp[DWIN_CHANNEL_MAX];
 
 static inline struct dwin_value* Dwin_GetChannelData(uint8_t Dd_valChannel)
 {
 	return &Dc_valChannelData_Mp[Dd_valChannel];
+}
+
+static inline struct dwin_value* Dwin_GetLastChannelData(uint8_t Dd_valChannel)
+{
+	return &Dc_valLastChannelData_Mp[Dd_valChannel];
 }
 
 extern void Dwin_InitFunction(void);
