@@ -314,11 +314,10 @@ typedef enum
 
 typedef struct
 {
-    uint8_t  valDatavaild;
-    uint8_t valStatus;
-    uint8_t valCRC_CHM;
-    int32_t valRawResult;
-    float valVoltage;
+    float valRawVoltage;
+    float valAvgVoltage;
+    float valMaxVoltage;
+    float valMinVoltage;
 } Abs_Result_STDR;
 
 

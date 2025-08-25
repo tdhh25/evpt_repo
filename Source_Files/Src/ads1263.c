@@ -9,7 +9,7 @@ uint8_t Ads_numMainStep_Mp = ADS_STEP_INIT;
 volatile Abs_Result_STDR Ads_valResults_Mp[ADS_NUM_CHANNEL_MAX] = {{0}};
 static uint8_t Ads_AllRegistrs[NUM_REGISTERS] =
 {
-    0x00, 0x11, 0x04, 0x00, 0x80, 0x04,
+    0x00, 0x11, 0x04, 0x40, 0x80, 0x04,
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x40, 0xBB, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
@@ -17,6 +17,11 @@ static uint8_t Ads_AllRegistrs[NUM_REGISTERS] =
 };
 const Ads_GroupCfg_STDR Ads_valGroupAllocate_Mp[ADS_NUM_CHANNEL_MAX] =
 {
+    {ADS_MUX_AIN0, ADS_MUX_AIN1},
+    {ADS_MUX_AIN2, ADS_MUX_AIN3},
+    {ADS_MUX_AIN4, ADS_MUX_AIN5},
+    {ADS_MUX_AIN6, ADS_MUX_AIN7},
+    {ADS_MUX_AIN8, ADS_MUX_AIN9},
     {ADS_MUX_AIN0, ADS_MUX_AIN1},
     {ADS_MUX_AIN2, ADS_MUX_AIN3},
     {ADS_MUX_AIN4, ADS_MUX_AIN5},
@@ -174,80 +179,64 @@ static Ads_ReturnType Ads_Init_Function(void)
         for(uint8_t numChip = 0; numChip < ADS_CHIP_INDEX_MAX; numChip++)
         {
             Ads_WriteRegister_Function(numChip, REG_ADDR_ID, Ads_AllRegistrs, NUM_REGISTERS);
-            Ads_CommandTransmit_Function(numChip, OPCODE_START1);
         }
     }
 
     return valRet_Lo;
 }
-float Test_Volt_Mp = 0;
+Abs_Result_STDR Ads_valResult_Mp[ADS_NUM_CHANNEL_MAX] = {{0}};
+float Ads_valResistance_Mp[ADS_NUM_CHANNEL_MAX] = {0.0};
 
-static Abs_Result_STDR Abs_ReadData_Function(uint8_t ChipId)       //status and CRC enable
-{
-    uint8_t valDataTxBuf_Lo[7] = { 0 };
-    uint8_t valDataRxBuf_Lo[7] = { 0 };
-
-    static Abs_Result_STDR valRetResult_Lo = {0};
-    valDataTxBuf_Lo[0] = OPCODE_RDATA1;
-    Ads_SpiCommunication_Function(ChipId, valDataTxBuf_Lo, valDataRxBuf_Lo, 7);
-
-
-    valRetResult_Lo.valStatus = valDataRxBuf_Lo[1];
-
-    if(valRetResult_Lo.valStatus & 0x40)
-    {
-        valRetResult_Lo. valDatavaild = 1;
-        valRetResult_Lo.valRawResult  = valDataRxBuf_Lo[2] << 24;
-        valRetResult_Lo.valRawResult |= valDataRxBuf_Lo[3] << 16;
-        valRetResult_Lo.valRawResult |= valDataRxBuf_Lo[4] << 8;
-        valRetResult_Lo.valRawResult |= valDataRxBuf_Lo[5] << 0;
-        valRetResult_Lo.valVoltage = (float)valRetResult_Lo.valRawResult * (2500.0 / 0x80000000);
-        valRetResult_Lo.valCRC_CHM = valDataRxBuf_Lo[6];
-			
-
-    }
-    else
-    {
-//        valRetResult_Lo.valDatavaild = 0;
-//        valRetResult_Lo.valRawResult  = 0;
-    }
-
-    return valRetResult_Lo;
-}
 uint8_t numErrorCnt = 0;
 uint8_t numRightCnt = 0;
-static void Ads_Convert_Function(void)
+uint32_t TestAllVolt_Mp[10] = {0};
+
+
+
+static void Ads_ResistanceProcess_Function(uint8_t valChannel_Lo)
 {
-    static uint8_t valChannel_Lo = ADS_NUM_1_CHANNEL;
-    (void)Ads_ConvertChannelConfig_Function(ADS_1_CHIP_INDEX, &Ads_valGroupAllocate_Mp[valChannel_Lo]);
-		Ads_valResults_Mp[valChannel_Lo] = Abs_ReadData_Function(ADS_1_CHIP_INDEX);
-	if(Ads_valResults_Mp[valChannel_Lo].valVoltage < 2400)
-	{
-		numErrorCnt++;
-	
-	}
+	const float ADS_PullUpVoltage =       3300.0f;
+	const uint32_t ADS_PullDownResistance =  100000000;
+	const uint32_t ADS_PullUpResistance =    100000000;
+	float valCurrent = 0.0;
+	valCurrent = (ADS_PullUpVoltage - Ads_valResult_Mp[valChannel_Lo].valRawVoltage)/(ADS_PullDownResistance+ADS_PullUpResistance);
+	Ads_valResistance_Mp[valChannel_Lo] = Ads_valResult_Mp[valChannel_Lo].valRawVoltage/valCurrent;
+}
 
+static void Ads_VoltResultProcess_Function(uint8_t valChannel_Lo)
+{
+		uint32_t volt_Lo = 0;
+		uint8_t valDataTxBuf_Lo[7] = { 0 };
+		uint8_t valDataRxBuf_Lo[7] = { 0 };
+		valDataTxBuf_Lo[0] = OPCODE_RDATA1;
+		uint8_t ChipId = (valChannel_Lo < ADS_NUM_6_CHANNEL) ? ADS_1_CHIP_INDEX : ADS_2_CHIP_INDEX;
+		Ads_SpiCommunication_Function((valChannel_Lo < ADS_NUM_6_CHANNEL) ? ADS_1_CHIP_INDEX : ADS_2_CHIP_INDEX, valDataTxBuf_Lo, valDataRxBuf_Lo, 7);
 
-
-
-		(void)Ads_ConvertChannelConfig_Function(ADS_2_CHIP_INDEX,&Ads_valGroupAllocate_Mp[valChannel_Lo]);
-		Ads_valResults_Mp[valChannel_Lo+5] = Abs_ReadData_Function(ADS_2_CHIP_INDEX);
-		
-		
-    if(valChannel_Lo < 4)
-    {
-        valChannel_Lo++;
-
-    }
-    else
-    {
-        valChannel_Lo = 0;
-
-    }
+		if(valDataRxBuf_Lo[1] & 0x40)
+		{
+				Ads_CommandTransmit_Function(ChipId, OPCODE_STOP1);
+				volt_Lo  = valDataRxBuf_Lo[2] << 24;
+				volt_Lo |= valDataRxBuf_Lo[3] << 16;
+				volt_Lo |= valDataRxBuf_Lo[4] << 8;
+				volt_Lo |= valDataRxBuf_Lo[5] << 0;
+				Ads_valResult_Mp[valChannel_Lo].valRawVoltage = (float)volt_Lo * (2500.0 / 0x80000000);
+				Ads_ResistanceProcess_Function(valChannel_Lo);
+		}
 
 }
+static void Ads_Convert_Function(uint8_t valChannel_Lo)
+{
+
+    uint8_t ChipId = (valChannel_Lo < ADS_NUM_6_CHANNEL) ? ADS_1_CHIP_INDEX : ADS_2_CHIP_INDEX;
+    Ads_CommandTransmit_Function(ChipId, OPCODE_START1);
+    (void)Ads_ConvertChannelConfig_Function(ChipId, &Ads_valGroupAllocate_Mp[valChannel_Lo]);
+}
+uint8_t Test_ch_C = 0;
 void Ads_1msMain_Function(void)
 {
+
+    
+
     switch(Ads_numMainStep_Mp)
     {
         case ADS_STEP_INIT:
@@ -259,7 +248,26 @@ void Ads_1msMain_Function(void)
             break;
 
         case ADS_STEP_CONVERT:
-            Ads_Convert_Function();
+            Ads_Convert_Function(Test_ch_C);
+            Ads_numMainStep_Mp = 111;
+
+            break;
+
+        case 111:
+
+						Ads_VoltResultProcess_Function(Test_ch_C);
+						Ads_ResistanceProcess_Function(Test_ch_C);
+
+						if(Test_ch_C < 10)
+						{
+								Test_ch_C++;
+
+						}
+						else
+						{
+								Test_ch_C = 0;
+						}
+            Ads_numMainStep_Mp = ADS_STEP_CONVERT;
             break;
 
         default:
@@ -273,77 +281,5 @@ Ads_ReturnType Ads_GetAdResult_Function(uint8_t valChannel)
 {
     return Ads_valResults_Mp[valChannel].valRawResult;
 }
-uint8_t calculateCRC(const uint8_t dataBytes[], uint8_t numBytes)
-{
-    /* Check that "numBytes" is between 1 and 4 */
-    assert((numBytes >= 3) && (numBytes <= 4));
 
-    /* Check that "dataBytes" is not a null pointer */
-    assert(dataBytes != NULL_PTR);
-
-    uint_fast8_t i;
-    uint_fast8_t crc        = 0xFFu;        /* Initial value of crc register     */
-    uint_fast8_t crcMSb;                    /* Most significant bit of crc byte  */
-    const uint_fast8_t poly = 0x07u;        /* CRC polynomial byte               */
-    uint_fast8_t shift_by   = 0u;           /* Intermediate variable             */
-    uint32_t data           = 0u;           /* Data storage variable             */
-    uint32_t msbMask        = 0x80000000u;  /* Points to the next data bit       */
-    uint32_t dataMSb;                       /* Most significant bit of data int  */
-
-    /* Construct data word from data bytes */
-    for (i = 0; i < numBytes; i++)
-    {
-        shift_by = 8 * (numBytes - i - 1);
-        data |= (((uint32_t) dataBytes[i]) << shift_by);
-    }
-
-    /* Determine the location of the first data byte */
-    shift_by = 8 * (4 - numBytes);
-    msbMask >>= shift_by;
-
-    /* CRC algorithm */
-    while (msbMask > 0)
-    {
-        // Check MSB's of data and crc
-        dataMSb = data & msbMask;
-        crcMSb  = crc & 0x80u;
-
-        // Shift crc byte
-        crc <<= 1;
-
-        // Check if XOR operation of MSbs results in additional XOR operation
-        if (dataMSb ^ crcMSb)
-        {
-            crc ^= poly;
-        }
-
-        /* Shift MSb pointer */
-        msbMask >>= 1;
-    }
-
-    return crc;
-}
-
-
-uint8_t calculateChecksum(const uint8_t dataBytes[], uint8_t numBytes)
-{
-    /* Check that "numBytes" is between 3 and 4 */
-    assert((numBytes >= 3) && (numBytes <= 4));
-
-    /* Check that "dataBytes" is not a null pointer */
-    assert(dataBytes != NULL_PTR);
-
-    /* Checksum initial value */
-    uint_fast8_t checksum   = 0x9Bu;
-
-    /* Checksum calculation */
-    uint8_t i;
-
-    for (i = 0; i < numBytes; i++)
-    {
-        checksum = (checksum + dataBytes[i]) & 0xFFu;
-    }
-
-    return checksum;
-}
 
