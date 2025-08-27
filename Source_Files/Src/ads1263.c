@@ -9,11 +9,32 @@ uint8_t Ads_numMainStep_Mp = ADS_STEP_INIT;
 volatile Abs_Result_STDR Ads_valResults_Mp[ADS_NUM_CHANNEL_MAX] = {{0}};
 static uint8_t Ads_AllRegistrs[NUM_REGISTERS] =
 {
-    0x00, 0x11, 0x04, 0x40, 0x80, 0x04,
-    0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x40, 0xBB, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
-    0x00, 0x40
+  0x00, 
+	0x11, 
+	0x04, 
+	0x40, 
+	0x80, 
+	0x04,
+	0x01, 
+	0x00, 
+	0x00, 
+	0x00, 
+	0x00, 
+	0x00,
+	0x40, 
+	0xBB, 
+	0x00, 
+	0x00, 
+	0x00, 
+	0x00, 
+	0x00, 
+	0x00, 
+	0x00, 
+	0x01, 
+	0x00, 
+	0x00,
+	0x00, 
+	0x40
 };
 const Ads_GroupCfg_STDR Ads_valGroupAllocate_Mp[ADS_NUM_CHANNEL_MAX] =
 {
@@ -119,13 +140,6 @@ static Ads_ReturnType Ads_ReadRegister_Function(uint8_t ChipId, uint8_t address,
 }
 
 
-static void Ads_RunModeConfig_Function(uint8_t ChipId, ADS_RunModeCfg_TDEM valMode)
-{
-    uint8_t valRxBuf_Lo = 0;
-    uint8_t valTxBuf_Lo = valMode << 6;
-    Ads_WriteRegister_Function(ChipId, REG_ADDR_MODE0, &valTxBuf_Lo, 1);
-}
-uint8_t sdfg = 0;
 static Ads_ReturnType Ads_ConvertChannelConfig_Function(uint8_t valChipId, const Ads_GroupCfg_STDR *valExtCh_Lo)
 {
     uint8_t valTxBuf_Lo = 0;
@@ -137,7 +151,6 @@ static Ads_ReturnType Ads_ConvertChannelConfig_Function(uint8_t valChipId, const
     {
         valTxBuf_Lo   = valRegData_Lo.Adc_P_Channel << 4;
         valTxBuf_Lo  |= valRegData_Lo.Adc_N_Channel;
-        sdfg = valTxBuf_Lo;
         valret_Lo = Ads_WriteRegister_Function(valChipId, REG_ADDR_INPMUX, &valTxBuf_Lo, 1);
     }
     else
@@ -186,25 +199,27 @@ static Ads_ReturnType Ads_Init_Function(void)
 }
 Abs_Result_STDR Ads_valResult_Mp[ADS_NUM_CHANNEL_MAX] = {{0}};
 float Ads_valResistance_Mp[ADS_NUM_CHANNEL_MAX] = {0.0};
-
+float Ads_valTemperature_Mp[ADS_NUM_CHANNEL_MAX] = {0.0};
 uint8_t numErrorCnt = 0;
 uint8_t numRightCnt = 0;
 uint32_t TestAllVolt_Mp[10] = {0};
 
 
 
-static void Ads_ResistanceProcess_Function(uint8_t valChannel_Lo)
+static float Ads_ResistanceProcess_Function(uint8_t valChannel_Lo)
 {
+	float valRetRes_Lo = 0.0;
 	const float ADS_PullUpVoltage =       3300.0f;
 	const uint32_t ADS_PullDownResistance =  100000000;
 	const uint32_t ADS_PullUpResistance =    100000000;
 	float valCurrent = 0.0;
 	valCurrent = (ADS_PullUpVoltage - Ads_valResult_Mp[valChannel_Lo].valRawVoltage)/(ADS_PullDownResistance+ADS_PullUpResistance);
-	Ads_valResistance_Mp[valChannel_Lo] = Ads_valResult_Mp[valChannel_Lo].valRawVoltage/valCurrent;
+	valRetRes_Lo = Ads_valResult_Mp[valChannel_Lo].valRawVoltage/valCurrent;
 }
 
-static void Ads_VoltResultProcess_Function(uint8_t valChannel_Lo)
+static float Ads_VoltResultProcess_Function(uint8_t valChannel_Lo)
 {
+		float valRetVolt_Lo = 0.0;
 		uint32_t volt_Lo = 0;
 		uint8_t valDataTxBuf_Lo[7] = { 0 };
 		uint8_t valDataRxBuf_Lo[7] = { 0 };
@@ -219,8 +234,7 @@ static void Ads_VoltResultProcess_Function(uint8_t valChannel_Lo)
 				volt_Lo |= valDataRxBuf_Lo[3] << 16;
 				volt_Lo |= valDataRxBuf_Lo[4] << 8;
 				volt_Lo |= valDataRxBuf_Lo[5] << 0;
-				Ads_valResult_Mp[valChannel_Lo].valRawVoltage = (float)volt_Lo * (2500.0 / 0x80000000);
-				Ads_ResistanceProcess_Function(valChannel_Lo);
+				valRetVolt_Lo = (float)volt_Lo * (2500.0 / 0x80000000);
 		}
 
 }
@@ -255,9 +269,9 @@ void Ads_1msMain_Function(void)
 
         case 111:
 
-						Ads_VoltResultProcess_Function(Test_ch_C);
-						Ads_ResistanceProcess_Function(Test_ch_C);
-
+						Ads_valResult_Mp[Test_ch_C].valRawVoltage = Ads_VoltResultProcess_Function(Test_ch_C);
+						Ads_valResistance_Mp[Test_ch_C] = Ads_ResistanceProcess_Function(Test_ch_C);
+						Ads_valTemperature_Mp[Test_ch_C] = PT100_CalibrationTemperature_Function(Test_ch_C);
 						if(Test_ch_C < 10)
 						{
 								Test_ch_C++;
@@ -279,7 +293,7 @@ void Ads_1msMain_Function(void)
 }
 Ads_ReturnType Ads_GetAdResult_Function(uint8_t valChannel)
 {
-    return Ads_valResults_Mp[valChannel].valRawResult;
+//    return Ads_valResults_Mp[valChannel].valRawResult;
 }
 
 

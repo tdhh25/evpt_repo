@@ -5,5 +5,5 @@
 #include <stdint.h>
 
 #define  Invalid_ERROR   -1.0f
-
+extern float PT100_CalibrationTemperature_Function(float pt100_resistance);
 #endif

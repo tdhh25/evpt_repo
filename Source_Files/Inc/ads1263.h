@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include "main.h"
-
+#include "PT100_Process.h"
 //*****************************************************************************
 //
 // SPI Opcodes
