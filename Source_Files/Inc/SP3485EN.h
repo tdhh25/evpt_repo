@@ -18,6 +18,7 @@ typedef enum
 #define USART_485_PIN_TxMODE   GPIOA,GPIO_PIN_1,GPIO_PIN_SET
 #define USART_485_PIN_RxMODE   GPIOA,GPIO_PIN_1,GPIO_PIN_RESET
 extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart1;
 extern void MX_USART2_UART_Init(void);
 extern void Uart_485_Init(void);
 extern HAL_StatusTypeDef RS485_SendData_DMA(uint8_t* data, uint16_t size);
