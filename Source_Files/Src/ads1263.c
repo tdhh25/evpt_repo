@@ -4,7 +4,7 @@
 
 
 extern SPI_HandleTypeDef hspi1;
-
+static SlideWindow Ads_TempDataBuf[ADS_NUM_CHANNEL_MAX] = {0};
 uint8_t Ads_numMainStep_Mp = ADS_STEP_INIT;
 volatile Abs_Result_STDR Ads_valResults_Mp[ADS_NUM_CHANNEL_MAX] = {{0}};
 static uint8_t Ads_AllRegistrs[NUM_REGISTERS] =
@@ -14,7 +14,7 @@ static uint8_t Ads_AllRegistrs[NUM_REGISTERS] =
 	0x04, 
 	0x40, 
 	0x80, 
-	0x04,
+	0x54,/*****Gain 32****/
 	0x01, 
 	0x00, 
 	0x00, 
@@ -193,6 +193,15 @@ static Ads_ReturnType Ads_Init_Function(void)
         {
             Ads_WriteRegister_Function(numChip, REG_ADDR_ID, Ads_AllRegistrs, NUM_REGISTERS);
         }
+				for(uint8_t chIndex = 0; chIndex < ADS_NUM_CHANNEL_MAX; chIndex++)
+				{
+					if (slide_window_init(&Ads_TempDataBuf[chIndex], WINDOW_SIZE) != 0) 
+					{
+							return ADS_RETURN_FAILED;
+					}	
+				
+				}
+
     }
 
     return valRet_Lo;
@@ -206,20 +215,27 @@ uint32_t TestAllVolt_Mp[10] = {0};
 
 
 
-static float Ads_ResistanceProcess_Function(uint8_t valChannel_Lo)
+static float Ads_ResistanceProcess_Function(uint8_t valChannel_Lo,float RawVolt)
 {
+
 	float valRetRes_Lo = 0.0;
 	const float ADS_PullUpVoltage =       3300.0f;
 	const uint32_t ADS_PullDownResistance =  100000000;
 	const uint32_t ADS_PullUpResistance =    100000000;
 	float valCurrent = 0.0;
-	valCurrent = (ADS_PullUpVoltage - Ads_valResult_Mp[valChannel_Lo].valRawVoltage)/(ADS_PullDownResistance+ADS_PullUpResistance);
-	valRetRes_Lo = Ads_valResult_Mp[valChannel_Lo].valRawVoltage/valCurrent;
+	if(valChannel_Lo >= ADS_NUM_CHANNEL_MAX)
+	{
+		return -1.0;
+	
+	}
+	valCurrent = (ADS_PullUpVoltage -RawVolt)/(ADS_PullDownResistance+ADS_PullUpResistance);
+	valRetRes_Lo = RawVolt/valCurrent;
 }
-
-static float Ads_VoltResultProcess_Function(uint8_t valChannel_Lo)
+		float valVolt_Lo = 0.0;
+static float Ads_GetTemperatureByVolt_Function(uint8_t valChannel_Lo)
 {
-		float valRetVolt_Lo = 0.0;
+
+	float valResistance = 0.0;
 		uint32_t volt_Lo = 0;
 		uint8_t valDataTxBuf_Lo[7] = { 0 };
 		uint8_t valDataRxBuf_Lo[7] = { 0 };
@@ -234,7 +250,14 @@ static float Ads_VoltResultProcess_Function(uint8_t valChannel_Lo)
 				volt_Lo |= valDataRxBuf_Lo[3] << 16;
 				volt_Lo |= valDataRxBuf_Lo[4] << 8;
 				volt_Lo |= valDataRxBuf_Lo[5] << 0;
-				valRetVolt_Lo = (float)volt_Lo * (2500.0 / 0x80000000);
+				valVolt_Lo = (float)volt_Lo * (2500.0/32/ 0x80000000);
+			  valResistance = Ads_ResistanceProcess_Function(valChannel_Lo,valVolt_Lo);
+				return (valResistance > 0)?PT100_CalibrationTemperature_Function(valResistance):-1.0;
+		}
+		else
+		{
+			return -1.0;
+		
 		}
 
 }
@@ -269,9 +292,12 @@ void Ads_1msMain_Function(void)
 
         case 111:
 
-						Ads_valResult_Mp[Test_ch_C].valRawVoltage = Ads_VoltResultProcess_Function(Test_ch_C);
-						Ads_valResistance_Mp[Test_ch_C] = Ads_ResistanceProcess_Function(Test_ch_C);
-						Ads_valTemperature_Mp[Test_ch_C] = PT100_CalibrationTemperature_Function(Test_ch_C);
+						Ads_valTemperature_Mp[Test_ch_C]= Ads_GetTemperatureByVolt_Function(Test_ch_C);
+						slide_window_add_data(&Ads_TempDataBuf[Test_ch_C], Ads_valTemperature_Mp[Test_ch_C]);
+						slide_window_calc_stats(&Ads_TempDataBuf[Test_ch_C],\
+																		&Dc_valChannelData_Mp[Test_ch_C].max,\
+																		&Dc_valChannelData_Mp[Test_ch_C].min,\
+																		&Dc_valChannelData_Mp[Test_ch_C].average);
 						if(Test_ch_C < 10)
 						{
 								Test_ch_C++;

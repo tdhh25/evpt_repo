@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include "main.h"
 #include "PT100_Process.h"
+#include "dwin_driver.h"
+#include "TemperatureDataProcess.h"
 //*****************************************************************************
 //
 // SPI Opcodes

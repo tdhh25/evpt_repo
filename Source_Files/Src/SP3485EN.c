@@ -34,8 +34,6 @@ HAL_StatusTypeDef RS485_ReceiveData_DMA(uint8_t* buffer, uint16_t size)
 void Uart_485_Init(void)
 {
 	MX_USART2_UART_Init();
-	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
-	__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
 	RS485_ReceiveData_DMA(&Rb_valRxBuffer_Mp[0], UART_RECEIVE_LEN);
 }
 

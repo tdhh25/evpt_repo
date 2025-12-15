@@ -444,6 +444,11 @@
               <FileType>1</FileType>
               <FilePath>..\Source_Files\Src\PT100_Process.c</FilePath>
             </File>
+            <File>
+              <FileName>TemperatureDataProcess.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Source_Files\Src\TemperatureDataProcess.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -513,6 +518,11 @@
               <FileName>PT100_Process.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Source_Files\Inc\PT100_Process.h</FilePath>
+            </File>
+            <File>
+              <FileName>TemperatureDataProcess.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Source_Files\Inc\TemperatureDataProcess.h</FilePath>
             </File>
           </Files>
         </Group>
