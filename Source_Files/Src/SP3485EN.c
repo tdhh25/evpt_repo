@@ -19,12 +19,31 @@ void Usart_RS485_TransmitModeConfig(USART_ModeSet Mode)
 HAL_StatusTypeDef RS485_SendData_DMA(uint8_t* data, uint16_t size)
 {
     HAL_StatusTypeDef status;
+	if(huart1.gState == HAL_UART_STATE_BUSY_TX)
+	{
+//		huart1.gState = HAL_UART_STATE_READY;
+//	
+	
+	}
+	else
+	{
+		status = HAL_UART_Transmit_DMA(&huart1, data, size);
+
+	}
+			
     
-    status = HAL_UART_Transmit_DMA(&huart1, data, size);
     
     return status;
 }
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart == &huart1)
+	{
+	huart1.gState = HAL_UART_STATE_READY;
+	}
 
+
+}
 
 HAL_StatusTypeDef RS485_ReceiveData_DMA(uint8_t* buffer, uint16_t size)
 {
@@ -39,7 +58,7 @@ void Uart_485_Init(void)
 
 void HAL_UART_IdleCallback(UART_HandleTypeDef *huart)
 {
-	struct ring_buffer* Rb_valRingBuffer_Lo = NULL;
+	struct ring_buffer* Rb_valRingBuffer_Lo = NULL_PTR;
 	
 	if (huart == &huart1)
 	{
@@ -67,19 +86,12 @@ void HAL_UART_IdleCallback(UART_HandleTypeDef *huart)
 	}
 }
 
-// void USART2_IRQHandler(void)
-// {
-//     if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE) != RESET)
-//     {
-//         __HAL_UART_CLEAR_IDLEFLAG(&huart2);
-// 		HAL_UART_IdleCallback(&huart2);
-//     }
-// }
 /**
   * @brief This function handles USART1 global interrupt.
   */
 void USART1_IRQHandler(void)
 {
+
     if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET)
     {
         __HAL_UART_CLEAR_IDLEFLAG(&huart1);

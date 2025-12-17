@@ -2998,7 +2998,7 @@ static void UART_DMATransmitCplt(DMA_HandleTypeDef *hdma)
     ATOMIC_CLEAR_BIT(huart->Instance->CR3, USART_CR3_DMAT);
 
     /* Enable the UART Transmit Complete Interrupt */
-    ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_TCIE);
+//    ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_TCIE);
 		 HAL_UART_TxCpltCallback(huart);
 
   }

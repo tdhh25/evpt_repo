@@ -61,7 +61,7 @@ DMA_HandleTypeDef hdma_usart2_tx;
 uint8_t Tsk_RunFlag = 0;
 /* USER CODE BEGIN PFP */
 
-uint8_t TxData_Lo[8] = {0,1,2,3,4,5,6,7};
+uint8_t TxData_Lo[12] = {0,1,2,3,4,5,6,7};
 uint8_t RxData_Lo[8] = {0};
 void Task_1ms_Function(void)
 {
@@ -93,6 +93,7 @@ void Task_10ms_Function(void)
 #endif
 	Dwin_MainFunction();
 	Ads_1msMain_Function();
+//	Dwin_SendData(TxData_Lo,12);
 
 }
 /**
@@ -344,17 +345,17 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Stream5_IRQn interrupt configuration */
-  //HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
-  //HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
   /* DMA1_Stream6_IRQn interrupt configuration */
-  //HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
-  //HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
   /* DMA2_Stream2_IRQn interrupt configuration */
-//  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 0, 0);
-//  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
-//  /* DMA2_Stream7_IRQn interrupt configuration */
-//  HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
-//  HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
+  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+  /* DMA2_Stream7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
 
 }
 

@@ -293,11 +293,11 @@ void Ads_1msMain_Function(void)
         case 111:
 
 						Ads_valTemperature_Mp[Test_ch_C]= Ads_GetTemperatureByVolt_Function(Test_ch_C);
-						slide_window_add_data(&Ads_TempDataBuf[Test_ch_C], Ads_valTemperature_Mp[Test_ch_C]);
-						slide_window_calc_stats(&Ads_TempDataBuf[Test_ch_C],\
-																		&Dc_valChannelData_Mp[Test_ch_C].max,\
-																		&Dc_valChannelData_Mp[Test_ch_C].min,\
-																		&Dc_valChannelData_Mp[Test_ch_C].average);
+//						slide_window_add_data(&Ads_TempDataBuf[Test_ch_C], Ads_valTemperature_Mp[Test_ch_C]);
+//						slide_window_calc_stats(&Ads_TempDataBuf[Test_ch_C],\
+//																		&Dc_valChannelData_Mp[Test_ch_C].max,\
+//																		&Dc_valChannelData_Mp[Test_ch_C].min,\
+//																		&Dc_valChannelData_Mp[Test_ch_C].average);
 						if(Test_ch_C < 10)
 						{
 								Test_ch_C++;
