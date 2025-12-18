@@ -46,4 +46,7 @@ struct dwin_value Dc_valChannelData_Mp[DWIN_CHANNEL_MAX] = {
 	{0x0000,0x0000,0x0000,0x0000,0x0000,0x1028},
 	{0x0000,0x0000,0x0000,0x0000,0x0000,0x102D},
 };
+
+struct dwin_value Dc_valLastChannelData_Mp[DWIN_CHANNEL_MAX] = {0};
+
 #endif
