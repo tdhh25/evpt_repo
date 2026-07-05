@@ -14,7 +14,7 @@ static uint8_t Ads_AllRegistrs[NUM_REGISTERS] =
 	0x04, 
 	0x40, 
 	0x80, 
-	0x54,/*****Gain 32****/
+	0x58,/*****Gain 32****/
 	0x01, 
 	0x00, 
 	0x00, 
@@ -230,12 +230,15 @@ static float Ads_ResistanceProcess_Function(uint8_t valChannel_Lo,float RawVolt)
 	}
 	valCurrent = (ADS_PullUpVoltage -RawVolt)/(ADS_PullDownResistance+ADS_PullUpResistance);
 	valRetRes_Lo = RawVolt/valCurrent;
+	return valRetRes_Lo;
 }
-		float valVolt_Lo = 0.0;
-static float Ads_GetTemperatureByVolt_Function(uint8_t valChannel_Lo)
+double valVolt_Lo = 0.0;
+double valResistance = 0.0;
+double Tempaurature = 0.0;
+static double Ads_GetTemperatureByVolt_Function(uint8_t valChannel_Lo)
 {
 
-	float valResistance = 0.0;
+	
 		uint32_t volt_Lo = 0;
 		uint8_t valDataTxBuf_Lo[7] = { 0 };
 		uint8_t valDataRxBuf_Lo[7] = { 0 };
@@ -250,9 +253,10 @@ static float Ads_GetTemperatureByVolt_Function(uint8_t valChannel_Lo)
 				volt_Lo |= valDataRxBuf_Lo[3] << 16;
 				volt_Lo |= valDataRxBuf_Lo[4] << 8;
 				volt_Lo |= valDataRxBuf_Lo[5] << 0;
-				valVolt_Lo = (float)volt_Lo * (2500.0/32/ 0x80000000);
+				valVolt_Lo = (double)volt_Lo * (2500.0/32.0/ 0x80000000);
 			  valResistance = Ads_ResistanceProcess_Function(valChannel_Lo,valVolt_Lo);
-				return (valResistance > 0)?PT100_CalibrationTemperature_Function(valResistance):-1.0;
+				Tempaurature =  (valResistance > 0)?PT100_CalibrationTemperature_Function(valResistance):-1.0;
+			return Tempaurature;
 		}
 		else
 		{
@@ -298,15 +302,15 @@ void Ads_1msMain_Function(void)
 //																		&Dc_valChannelData_Mp[Test_ch_C].max,\
 //																		&Dc_valChannelData_Mp[Test_ch_C].min,\
 //																		&Dc_valChannelData_Mp[Test_ch_C].average);
-						if(Test_ch_C < 10)
-						{
-								Test_ch_C++;
+//						if(Test_ch_C < 10)
+//						{
+//								Test_ch_C++;
 
-						}
-						else
-						{
-								Test_ch_C = 0;
-						}
+//						}
+//						else
+//						{
+//								Test_ch_C = 0;
+//						}
             Ads_numMainStep_Mp = ADS_STEP_CONVERT;
             break;
 
