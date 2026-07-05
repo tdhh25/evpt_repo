@@ -3,15 +3,17 @@
 
 #include <stdint.h>
 
-enum dwin_step {
-	dwin_step_process = 0,
-	dwin_step_swtich_frac,
-};
+#define DWIN_STEP_PROCESS		0
+#define DWIN_STEP_SWITCH_FRAC	1
 
 enum dwin_addr {
-	dwin_addr_average 	= 0x2100,
-	dwin_addr_frac 		= 0x2101,
-	dwin_addr_hold 		= 0x2102,
+	dwin_addr_average			= 0x2100,
+	dwin_addr_real_time_curve	= 0x2101,
+	dwin_addr_data_record		= 0x2102,
+	dwin_addr_param_config_e	= 0x2103,
+	dwin_addr_frac				= 0x2104,
+	dwin_addr_hold				= 0x2105,
+	dwin_addr_param_config_r	= 0x210E,
 };
 
 struct dwin_value {
@@ -25,9 +27,11 @@ struct dwin_value {
 
 struct dwin_ctrl {
 	uint8_t			average;
+	uint8_t			rt_curve;
+	uint8_t			config_ip;
 	uint8_t			fractional;
-	uint8_t			fractional_status; /* 0: .0 1: 0.00*/
-	uint8_t			hold;
+	uint8_t			fractional_status;	/* 0: 0.0 	1: 0.00*/
+	uint8_t			hold;				/* 1: hold	0: release*/
 };
 
 struct dwin_device {
