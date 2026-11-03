@@ -1,6 +1,5 @@
 #include "dwin_driver.h"
 
-static uint16_t				Dd_valZero_Mp; 
 static struct ring_buffer	Dd_valRingBuffer_Mp;
 static struct dwin_device	Dd_valDevice_Mp;
 static struct dwin_device*	Dd_valDevPtr_Mp = &Dd_valDevice_Mp;
@@ -112,7 +111,8 @@ void Dwin_ProcessChannelData(uint8_t Dd_valChannel)
     uint16_t Dd_valBaseAddr_Lo = 0;
 	uint16_t Dd_valValue_Lo = 0;
     struct dwin_value* Dd_valChannelData_Lo = NULL;
-    uint16_t* Dd_valPointers_Lo[5] = {NULL, NULL, NULL, NULL, NULL};
+    int16_t  Dd_valTemp_Lo[4] = {0, 0, 0, 0};
+    uint16_t Dd_valWave_Lo = 0;
 
 	if(Dd_valChannel >= 10)
 		return;
@@ -147,29 +147,29 @@ void Dwin_ProcessChannelData(uint8_t Dd_valChannel)
 	
 	if(Dd_valSet_Lo)
 	{
-		Dd_valPointers_Lo[0] = &Dd_valChannelData_Lo->current;
-		Dd_valPointers_Lo[1] = &Dd_valChannelData_Lo->max;
-		Dd_valPointers_Lo[2] = &Dd_valChannelData_Lo->min;
-		Dd_valPointers_Lo[3] = &Dd_valChannelData_Lo->average;
-		Dd_valPointers_Lo[4] = &Dd_valChannelData_Lo->wave;
-	}
-	else
-	{
-		for(i = 0;i < 5;i++)
-		{
-			Dd_valPointers_Lo[i] = &Dd_valZero_Mp;
-		}
+		Dd_valTemp_Lo[0] = Dd_valChannelData_Lo->current;
+		Dd_valTemp_Lo[1] = Dd_valChannelData_Lo->max;
+		Dd_valTemp_Lo[2] = Dd_valChannelData_Lo->min;
+		Dd_valTemp_Lo[3] = Dd_valChannelData_Lo->average;
+		Dd_valWave_Lo = Dd_valChannelData_Lo->wave;
 	}
 	
-	for(i = 0;i < 5;i++)
+	for(i = 0;i < 4;i++)
 	{
-		Dd_valValue_Lo = *Dd_valPointers_Lo[i];
+		Dd_valValue_Lo = (uint16_t)Dd_valTemp_Lo[i];
 		/* 如果不是两位小数需要除以10 */
 		if(!Dd_valDevPtr_Mp->ctrl.fractional_status)
-			Dd_valValue_Lo = (*Dd_valPointers_Lo[i] / 10);
+			Dd_valValue_Lo = (uint16_t)(Dd_valTemp_Lo[i] / 10);
 		Dd_valSendData_Lo[2 + 2 * i] = (Dd_valValue_Lo >> 8) & 0xFF;
 		Dd_valSendData_Lo[3 + 2 * i] = (Dd_valValue_Lo >> 0) & 0xFF;
 	}
+
+	Dd_valValue_Lo = Dd_valWave_Lo;
+	/* 如果不是两位小数需要除以10 */
+	if(!Dd_valDevPtr_Mp->ctrl.fractional_status)
+		Dd_valValue_Lo = Dd_valWave_Lo / 10;
+	Dd_valSendData_Lo[2 + 2 * 4] = (Dd_valValue_Lo >> 8) & 0xFF;
+	Dd_valSendData_Lo[3 + 2 * 4] = (Dd_valValue_Lo >> 0) & 0xFF;
 	Dd_valSendData_Lo[0] = (Dd_valBaseAddr_Lo >> 8) & 0xFF;
 	Dd_valSendData_Lo[1] = Dd_valBaseAddr_Lo & 0xFF;
 	

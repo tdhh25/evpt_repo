@@ -92,7 +92,7 @@ void Task_10ms_Function(void)
 	AT24C_AsyncPolling_Function();
 #endif
 	Dwin_MainFunction();
-	Ads_1msMain_Function();
+	Ads_10msMain_Function();
 //	Dwin_SendData(TxData_Lo,12);
 
 }

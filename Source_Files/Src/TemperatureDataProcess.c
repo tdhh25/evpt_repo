@@ -56,44 +56,110 @@ int8_t slide_window_add_data(SlideWindow *sw, float new_data)
 }
 
 /**
- * @brief  计算当前滑动窗口内的统计值（最大值、最小值、平均值）
+ * @brief  将浮点统计值钳制到 int16_t 可表示范围，负值按补码原样保留
+ * @param  valValue_Lo 待转换的浮点值（定点：摄氏度 x 100）
+ * @retval 钳制后的 int16_t 值（-32768 ~ 32767）
+ */
+static int16_t Tdp_ClampToInt16_Function(float valValue_Lo)
+{
+    int16_t valRet_Lo = 0;
+
+    if (valValue_Lo <= -32768.0F)
+    {
+        valRet_Lo = -32768;
+    }
+    else if (valValue_Lo >= 32767.0F)
+    {
+        valRet_Lo = 32767;
+    }
+    else
+    {
+        valRet_Lo = (int16_t)valValue_Lo;
+    }
+
+    return valRet_Lo;
+}
+
+/**
+ * @brief  将浮点值钳制到 uint16_t 可表示范围
+ * @param  valValue_Lo 待转换的浮点值（波动幅度，非负）
+ * @retval 钳制后的 uint16_t 值（0 ~ 65535）
+ */
+static uint16_t Tdp_ClampToUint16_Function(float valValue_Lo)
+{
+    uint16_t valRet_Lo = 0U;
+
+    if (valValue_Lo <= 0.0F)
+    {
+        valRet_Lo = 0U;
+    }
+    else if (valValue_Lo >= 65535.0F)
+    {
+        valRet_Lo = 65535U;
+    }
+    else
+    {
+        valRet_Lo = (uint16_t)valValue_Lo;
+    }
+
+    return valRet_Lo;
+}
+
+/**
+ * @brief  计算当前滑动窗口的统计值，并一次性写入显示数据结构的 current/max/min/average/wave
  * @param  sw 滑动窗口结构体指针
- * @param  max_val 输出最大值
- * @param  min_val 输出最小值
- * @param  avg_val 输出平均值
+ * @param  valChannelData_Lo 输出：通道显示数据（定点摄氏度 x100）
  * @retval 0-成功，-1-失败（无有效数据）
  */
-int8_t slide_window_calc_stats(SlideWindow *sw, uint16_t *max_val, uint16_t *min_val, uint16_t *avg_val)///后面需要改为浮点型
+int8_t slide_window_calc_stats(SlideWindow *sw, struct dwin_value *valChannelData_Lo)
 {
-    if (sw == NULL || max_val == NULL || min_val == NULL || avg_val == NULL)
+    float   valAvg_Lo = 0.0F;
+    float   valMax_Lo = 0.0F;
+    float   valMin_Lo = 0.0F;
+    float   valWave_Lo = 0.0F;
+    uint8_t valIdx_Lo = 0U;
+    uint8_t numIdx_Lo = 0U;
+
+    if ((sw == NULL) || (valChannelData_Lo == NULL))
     {
         return -1;
     }
 
-    if (sw->current_count == 0)
+    if (sw->current_count == 0U)
     {
         return -1;
     }
 
-    *avg_val = sw->sum / (float)sw->current_count;
+    valAvg_Lo = sw->sum / (float)sw->current_count;
 
-    *max_val = sw->data[0];
-    *min_val = sw->data[0];
+    /* 以窗口内最老的元素作为 min/max 初值，避免使用未写入的 data[0] */
+    valIdx_Lo = (uint8_t)((sw->tail_idx + sw->window_len - sw->current_count + 1) % sw->window_len);
+    valMax_Lo = sw->data[valIdx_Lo];
+    valMin_Lo = sw->data[valIdx_Lo];
 
-    for (uint8_t i = 0; i < sw->current_count; i++)
+    for (numIdx_Lo = 0U; numIdx_Lo < sw->current_count; numIdx_Lo++)
     {
-        uint8_t idx = (sw->tail_idx - sw->current_count + 1 + i) % sw->window_len;
+        valIdx_Lo = (uint8_t)((sw->tail_idx + sw->window_len - sw->current_count + 1 + numIdx_Lo) % sw->window_len);
 
-        if (sw->data[idx] > *max_val)
+        if (sw->data[valIdx_Lo] > valMax_Lo)
         {
-            *max_val = sw->data[idx];
+            valMax_Lo = sw->data[valIdx_Lo];
         }
 
-        if (sw->data[idx] < *min_val)
+        if (sw->data[valIdx_Lo] < valMin_Lo)
         {
-            *min_val = sw->data[idx];
+            valMin_Lo = sw->data[valIdx_Lo];
         }
     }
+
+    /* wave = 窗口内波动幅度 = 最大值 - 最小值 */
+    valWave_Lo = valMax_Lo - valMin_Lo;
+
+    valChannelData_Lo->current = Tdp_ClampToInt16_Function(sw->data[sw->tail_idx]);
+    valChannelData_Lo->max     = Tdp_ClampToInt16_Function(valMax_Lo);
+    valChannelData_Lo->min     = Tdp_ClampToInt16_Function(valMin_Lo);
+    valChannelData_Lo->average = Tdp_ClampToInt16_Function(valAvg_Lo);
+    valChannelData_Lo->wave    = Tdp_ClampToUint16_Function(valWave_Lo);
 
     return 0;
 }

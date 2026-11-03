@@ -11,7 +11,7 @@ double PT100_CalibrationTemperature_Function(double pt100_resistance)
     // 电阻值范围校验（合理范围：18.52Ω ~ 390.48Ω）
     if (pt100_resistance < 18.52 || pt100_resistance > 390.48)
     {
-        return Invalid_ERROR; 
+        return PT100_TEMP_INVALID_C100;
     }
 
     double Rt_R0 = pt100_resistance / R0;  // 归一化电阻值
@@ -23,7 +23,7 @@ double PT100_CalibrationTemperature_Function(double pt100_resistance)
 
         if (discriminant < 0)
         {
-            return Invalid_ERROR;
+            return PT100_TEMP_INVALID_C100;
         }
         temperature = (-A + sqrtf(discriminant)) / (2 * B);
     }
@@ -55,7 +55,7 @@ double PT100_CalibrationTemperature_Function(double pt100_resistance)
     }
     if (temperature < -200.0 || temperature > 850.0)
     {
-        return Invalid_ERROR;
+        return PT100_TEMP_INVALID_C100;
     }
 
     return temperature;

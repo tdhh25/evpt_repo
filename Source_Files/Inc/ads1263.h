@@ -107,7 +107,13 @@
 
 
 #define ADS_STEP_INIT                            0
-#define ADS_STEP_CONVERT                         1
+#define ADS_STEP_INIT_WAIT                       1
+#define ADS_STEP_INIT_WRITE                      2
+#define ADS_STEP_CONVERT                         3
+#define ADS_STEP_PROCESS                         4
+
+#define ADS_RESET_LOW_TICKS                      10
+#define ADS_RESET_SETTLE_TICKS                   5
 
 
 #define ADS_MUX_AIN0                            0
@@ -340,7 +346,7 @@ typedef uint8_t    Ads_ADC2FSC0_19Reg;
 typedef uint8_t    Ads_ADC2FSC1_1AReg;
 typedef uint32_t   Ads_ReturnType;
 
-extern void Ads_1msMain_Function(void);
+extern void Ads_10msMain_Function(void);
 extern uint8_t calculateCRC(const uint8_t dataBytes[], uint8_t numBytes);
 extern uint8_t calculateChecksum(const uint8_t dataBytes[], uint8_t numBytes);
 #endif /* ADS1263_H_ */

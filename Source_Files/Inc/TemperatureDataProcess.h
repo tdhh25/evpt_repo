@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include "dwin_types.h"
 
 // 滑动窗口配置（可根据需求修改）
 #define WINDOW_SIZE 10  // 滑动窗口长度（示例为10，与之前需求一致）
@@ -20,5 +21,5 @@ typedef struct
 } SlideWindow;
 extern int8_t slide_window_init(SlideWindow *sw, uint8_t window_len);
 extern int8_t slide_window_add_data(SlideWindow *sw, float new_data);
-extern int8_t slide_window_calc_stats(SlideWindow *sw, uint16_t *max_val, uint16_t *min_val, uint16_t *avg_val);
+extern int8_t slide_window_calc_stats(SlideWindow *sw, struct dwin_value *valChannelData_Lo);
 #endif

@@ -20,10 +20,10 @@ static inline struct dwin_value* Dwin_GetChannelData(uint8_t Dd_valChannel)
 
 static inline void Dwin_SetChannelData(
 	uint8_t Dd_valChannel,
-	uint16_t current,
-	uint16_t max,
-	uint16_t min,
-	uint16_t average,
+	int16_t current,
+	int16_t max,
+	int16_t min,
+	int16_t average,
 	uint16_t wave
 )
 {
